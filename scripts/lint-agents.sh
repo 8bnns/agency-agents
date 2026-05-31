@@ -87,8 +87,11 @@ lint_file() {
   done
 
   # 3. Check recommended sections (warn only)
+  # Only the first two `---` lines delimit the frontmatter; everything after
+  # the second `---` is body, including any `---` horizontal rules. Keep this
+  # parsing in agreement with get_body() in scripts/convert.sh.
   local body
-  body=$(awk 'BEGIN{n=0} /^---$/{n++; next} n>=2{print}' "$file")
+  body=$(awk 'BEGIN{n=0} n>=2{print; next} /^---$/{n++}' "$file")
 
   for section in "${RECOMMENDED_SECTIONS[@]}"; do
     if ! echo "$body" | grep -qi "$section"; then
