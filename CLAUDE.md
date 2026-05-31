@@ -90,10 +90,14 @@ under "Agent File Structure" — follow it so the section routing works.
 
 ### The `AGENT_DIRS` list must stay in sync across three files
 
-The category-directory list is duplicated in `scripts/lint-agents.sh`,
-`scripts/convert.sh`, and `scripts/install.sh`. When adding or renaming a
-category directory, update **all three** (and the `paths:` / `git diff` globs in
-`.github/workflows/lint-agents.yml`).
+The category-directory list (15 entries) is duplicated verbatim in
+`scripts/lint-agents.sh`, `scripts/convert.sh`, and `scripts/install.sh`. When
+adding or renaming a category directory, update **all three**. If the new
+directory will contain *lintable* agents (frontmatter with `name`), also add it
+to the `paths:` trigger and the `git diff` glob list in
+`.github/workflows/lint-agents.yml` — note that CI currently lists only the 14
+agent-bearing dirs and intentionally omits `strategy/` (its docs have no
+frontmatter and are never linted or transpiled).
 
 ## Conventions for changes
 
