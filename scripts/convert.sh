@@ -93,9 +93,12 @@ get_field() {
 }
 
 # Strip the leading frontmatter block and return only the body.
+# Only the FIRST TWO `---` lines delimit the frontmatter; everything after
+# the second `---` is body and is printed verbatim — including any `---`
+# horizontal rules, which must be preserved in the converted output.
 # Usage: get_body <file>
 get_body() {
-  awk 'BEGIN{fm=0} /^---$/{fm++; next} fm>=2{print}' "$1"
+  awk 'BEGIN{fm=0} fm>=2{print; next} /^---$/{fm++}' "$1"
 }
 
 # Convert a human-readable agent name to a lowercase kebab-case slug.
