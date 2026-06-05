@@ -51,6 +51,8 @@ logs/
 coverage/
 .nyc_output/
 *.lcov
+# Vendored bats-core, fetched on demand by test/run.sh
+test/vendor/
 
 # Build outputs
 dist/

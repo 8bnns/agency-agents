@@ -1,0 +1,37 @@
+name: Test Tooling
+
+# Unit tests for the Bash tooling in scripts/. The existing lint-agents.yml
+# workflow validates agent *content*; this one validates the *tools* that lint
+# and transpile that content.
+
+on:
+  pull_request:
+    paths:
+      - "scripts/**"
+      - "test/**"
+      - ".github/workflows/test-tooling.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/**"
+      - "test/**"
+
+jobs:
+  bats:
+    name: Run bats test suite
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install bats
+        # Pinned to the 3.0.1 commit SHA (supply-chain hardening)
+        uses: bats-core/bats-action@42fcc8700f773c075a16a90eb11674c0318ad507 # 3.0.1
+        with:
+          support-install: false
+          assert-install: false
+          detik-install: false
+          file-install: false
+
+      - name: Run tests
+        run: bats test/
