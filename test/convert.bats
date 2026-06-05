@@ -58,8 +58,10 @@ run_convert() {
 @test "convert: qwen omits the tools field when absent" {
   grep -v '^tools:' "$FIXTURES/valid-agent.md" > "$TMPREPO/notools.md"
   run_convert qwen "$TMPREPO/notools.md"
-  run grep -c "^tools:" "$OUT/qwen/agents/test-valid-agent.md"
-  [ "$output" -eq 0 ]
+  # grep -q exits 1 when the pattern is absent (and 2 on a read error, which
+  # would also catch a missing output file), so assert the not-found status.
+  run grep -q "^tools:" "$OUT/qwen/agents/test-valid-agent.md"
+  [ "$status" -eq 1 ]
 }
 
 @test "convert: body templating tokens are preserved verbatim" {
@@ -86,8 +88,9 @@ run_convert() {
 
 @test "convert: openclaw persona content does not leak into AGENTS.md" {
   run_convert openclaw
-  run grep -c "## Identity" "$OUT/openclaw/test-valid-agent/AGENTS.md"
-  [ "$output" -eq 0 ]
+  # Persona headers must be absent from AGENTS.md: grep -q exits 1 (not found).
+  run grep -q "## Identity" "$OUT/openclaw/test-valid-agent/AGENTS.md"
+  [ "$status" -eq 1 ]
 }
 
 @test "convert: openclaw IDENTITY.md uses emoji and vibe when present" {

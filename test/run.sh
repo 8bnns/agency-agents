@@ -9,14 +9,20 @@ set -euo pipefail
 
 TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Pin the vendored bats-core to a release tag so local runs are reproducible and
+# don't drift with bats-core's default branch. CI pins separately via
+# bats-core/bats-action in .github/workflows/test-tooling.yml.
+BATS_CORE_REF="${BATS_CORE_REF:-v1.13.0}"
+
 if command -v bats >/dev/null 2>&1; then
   BATS=bats
 else
   VENDOR="$TEST_DIR/vendor/bats-core"
   if [[ ! -x "$VENDOR/bin/bats" ]]; then
-    echo "bats not found — vendoring bats-core into test/vendor/ ..."
+    echo "bats not found — vendoring bats-core $BATS_CORE_REF into test/vendor/ ..."
     mkdir -p "$TEST_DIR/vendor"
-    git clone --depth 1 https://github.com/bats-core/bats-core.git "$VENDOR" >/dev/null 2>&1
+    git clone --depth 1 --branch "$BATS_CORE_REF" \
+      https://github.com/bats-core/bats-core.git "$VENDOR" >/dev/null 2>&1
   fi
   BATS="$VENDOR/bin/bats"
 fi
