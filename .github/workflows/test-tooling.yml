@@ -25,7 +25,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install bats
-        uses: bats-core/bats-action@3.0.1
+        # Pinned to the 3.0.1 commit SHA (supply-chain hardening)
+        uses: bats-core/bats-action@42fcc8700f773c075a16a90eb11674c0318ad507 # 3.0.1
         with:
           support-install: false
           assert-install: false
